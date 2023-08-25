@@ -1,20 +1,26 @@
 package main
 
 import (
-	"fmt"
+	"github.com/BetterToPractice/go-gin-setup/handler"
+	helmet "github.com/danielkov/gin-helmet"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func main() {
-	fmt.Println("Starting Server...")
 	router := gin.Default()
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:  []string{"*"},
+		AllowMethods:  []string{"*"},
+		AllowHeaders:  []string{"*"},
+		AllowWildcard: true,
+	}))
+	router.Use(helmet.Default())
+	router.Use(gzip.Gzip(gzip.BestCompression))
 
-	router.GET("/api/account", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"hello": "world",
-		})
+	handler.NewHandler(&handler.Config{
+		Engine: router,
 	})
-
 	router.Run(":8080")
 }
