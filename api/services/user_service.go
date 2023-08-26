@@ -34,3 +34,15 @@ func (c UserService) Register(username, password, email string) (*models.User, e
 	err := c.db.ORM.Create(&user).Error
 	return user, err
 }
+
+func (c UserService) Query() (*[]models.User, error) {
+	var users = new([]models.User)
+	err := c.db.ORM.Find(&users).Error
+	return users, err
+}
+
+func (c UserService) GetByUsername(username string) (*models.User, error) {
+	user := new(models.User)
+	err := c.db.ORM.First(&user, "username = ?", username).Error
+	return user, err
+}

@@ -19,5 +19,5 @@ func NewUserRouter(handler lib.HttpHandler, userController controllers.UserContr
 
 func (r UserRouter) Setup() {
 	r.handler.Engine.GET("/users", r.userController.List)
-	r.handler.Engine.GET("/users/:id", r.userController.Detail)
+	r.handler.Engine.GET("/users/:username", r.userController.Detail)
 }
