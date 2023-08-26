@@ -6,6 +6,7 @@ import (
 
 var Module = fx.Options(
 	fx.Provide(NewCorsMiddleware),
+	fx.Provide(NewJWTMiddleware),
 	fx.Provide(NewMiddlewares),
 )
 
