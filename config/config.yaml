@@ -1,0 +1,14 @@
+Name: go-gin-setup
+
+Http:
+  Host: localhost
+  Port: 5000
+
+Database:
+  Name: setup_db
+  Host: localhost
+  Port: 5432
+  Username: setup_user
+  Password: setup_password
+  SslMode: disable
+  TimeZone: Asia/Jakarta
