@@ -1,0 +1,23 @@
+package routes
+
+import (
+	"github.com/BetterToPractice/go-gin-setup/api/controllers"
+	"github.com/BetterToPractice/go-gin-setup/lib"
+)
+
+type UserRouter struct {
+	handler        lib.HttpHandler
+	userController controllers.UserController
+}
+
+func NewUserRouter(handler lib.HttpHandler, userController controllers.UserController) UserRouter {
+	return UserRouter{
+		handler:        handler,
+		userController: userController,
+	}
+}
+
+func (r UserRouter) Setup() {
+	r.handler.Engine.GET("/users", r.userController.List)
+	r.handler.Engine.GET("/users/:id", r.userController.Detail)
+}
