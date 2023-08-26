@@ -20,8 +20,21 @@ func NewAuthController(authService services.AuthService, userService services.Us
 }
 
 func (c AuthController) Register(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, gin.H{
-		"message": "register",
+	register := new(dto.Register)
+	if err := ctx.ShouldBind(register); err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	_, err := c.userService.Register(register.Username, register.Password, register.Email)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, dto.RegisterResponse{
+		Username: register.Username,
+		Email:    register.Email,
 	})
 }
 
