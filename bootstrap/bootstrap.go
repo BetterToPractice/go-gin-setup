@@ -20,13 +20,13 @@ var Module = fx.Options(
 	fx.Invoke(bootstrap),
 )
 
-func bootstrap(lifecycle fx.Lifecycle, handler lib.HttpHandler, routes routes.Routes, middlewares middlewares.Middlewares) {
+func bootstrap(lifecycle fx.Lifecycle, handler lib.HttpHandler, routes routes.Routes, middlewares middlewares.Middlewares, config lib.Config) {
 	lifecycle.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			go func() {
 				middlewares.Setup()
 				routes.Setup()
-				if err := handler.Engine.Run(":8080"); err != nil {
+				if err := handler.Engine.Run(config.Http.ListenAddr()); err != nil {
 					fmt.Println("error when run service", err)
 				}
 			}()

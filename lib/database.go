@@ -10,17 +10,9 @@ type Database struct {
 	ORM *gorm.DB
 }
 
-func NewDatabase() Database {
+func NewDatabase(config Config) Database {
 	dbConfig := postgres.Config{
-		DSN: fmt.Sprintf(
-			"host=%s user=%s password=%s dbname=%s port=%d TimeZone=%s",
-			"localhost",
-			"setup_user",
-			"setup_password",
-			"setup_db",
-			5432,
-			"Asia/Jakarta",
-		),
+		DSN: config.Database.DSN(),
 	}
 
 	db, err := gorm.Open(postgres.New(dbConfig), &gorm.Config{})

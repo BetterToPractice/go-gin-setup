@@ -20,7 +20,7 @@ var StartCmd = &cobra.Command{
 		lib.SetConfigPath(configFile)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		db := lib.NewDatabase()
+		db := lib.NewDatabase(lib.NewConfig())
 		if err := db.ORM.AutoMigrate(
 			&models.User{},
 		); err != nil {

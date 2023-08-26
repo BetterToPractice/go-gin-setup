@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"fmt"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
@@ -50,4 +51,21 @@ func NewConfig() Config {
 
 func SetConfigPath(path string) {
 	configPath = path
+}
+
+func (h HttpConfig) ListenAddr() string {
+	return fmt.Sprintf("%s:%d", h.Host, h.Port)
+}
+
+func (d DatabaseConfig) DSN() string {
+	return fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=%s",
+		d.Host,
+		d.Username,
+		d.Password,
+		d.Name,
+		d.Port,
+		d.SslMode,
+		d.TimeZone,
+	)
 }
