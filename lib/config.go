@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
+	"net/http"
 )
 
 var configPath = "./config.yml"
@@ -16,8 +17,15 @@ var configDefault = Config{
 	Auth:     &AuthConfig{},
 	Database: &DatabaseConfig{},
 	Cors: &CorsConfig{
-		AllowOrigins:  []string{"*"},
-		AllowMethods:  []string{"GET", "POST", "PATCH", "PUT", "DELETE"},
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{
+			http.MethodGet,
+			http.MethodHead,
+			http.MethodPut,
+			http.MethodPatch,
+			http.MethodPost,
+			http.MethodDelete,
+		},
 		AllowHeaders:  []string{"*"},
 		AllowWildcard: true,
 	},
