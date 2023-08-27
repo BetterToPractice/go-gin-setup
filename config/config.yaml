@@ -19,3 +19,7 @@ Auth:
   IgnorePathPrefixes:
     - /login
     - /register
+
+Cors:
+  AllowOrigins:
+    - "*"

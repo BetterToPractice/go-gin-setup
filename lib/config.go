@@ -15,6 +15,12 @@ var configDefault = Config{
 	},
 	Auth:     &AuthConfig{},
 	Database: &DatabaseConfig{},
+	Cors: &CorsConfig{
+		AllowOrigins:  []string{"*"},
+		AllowMethods:  []string{"GET", "POST", "PATCH", "PUT", "DELETE"},
+		AllowHeaders:  []string{"*"},
+		AllowWildcard: true,
+	},
 }
 
 type Config struct {
@@ -22,6 +28,14 @@ type Config struct {
 	Http     *HttpConfig     `mapstructure:"Http"`
 	Database *DatabaseConfig `mapstructure:"Database"`
 	Auth     *AuthConfig     `mapstructure:"Auth"`
+	Cors     *CorsConfig     `mapstructure:"Cors"`
+}
+
+type CorsConfig struct {
+	AllowOrigins  []string `mapstructure:"AllowOrigins"`
+	AllowMethods  []string `mapstructure:"AllowMethods"`
+	AllowHeaders  []string `mapstructure:"AllowHeaders"`
+	AllowWildcard bool     `mapstructure:"AllowWildcard"`
 }
 
 type HttpConfig struct {
