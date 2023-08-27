@@ -13,6 +13,7 @@ var configDefault = Config{
 		Host: "192.0.0.1",
 		Port: 8080,
 	},
+	Auth:     &AuthConfig{},
 	Database: &DatabaseConfig{},
 }
 
@@ -20,6 +21,7 @@ type Config struct {
 	Name     string          `mapstructure:"Name"`
 	Http     *HttpConfig     `mapstructure:"Http"`
 	Database *DatabaseConfig `mapstructure:"Database"`
+	Auth     *AuthConfig     `mapstructure:"Auth"`
 }
 
 type HttpConfig struct {
@@ -35,6 +37,12 @@ type DatabaseConfig struct {
 	Password string `mapstructure:"Password"`
 	SslMode  string `mapstructure:"SslMode"`
 	TimeZone string `mapstructure:"TimeZone"`
+}
+
+type AuthConfig struct {
+	Enable             string   `mapstructure:"Enable"`
+	TokenExpired       int      `mapstructure:"TokenExpired"`
+	IgnorePathPrefixes []string `mapstructure:"IgnorePathPrefixes"`
 }
 
 func NewConfig() Config {
