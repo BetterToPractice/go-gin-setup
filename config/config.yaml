@@ -19,7 +19,14 @@ Auth:
   IgnorePathPrefixes:
     - /login
     - /register
+    - /swagger
 
 Cors:
   AllowOrigins:
     - "*"
+
+Swagger:
+  Title: "Go Gin Setup Docs"
+  Description: "Collection of Endpoints"
+  Version: "1.0"
+  DocUrl: "/swagger/*any"

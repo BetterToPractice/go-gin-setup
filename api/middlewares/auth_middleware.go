@@ -25,7 +25,7 @@ func NewAuthMiddleware(config lib.Config, handler lib.HttpHandler, authService s
 func (m AuthMiddleware) core() gin.HandlerFunc {
 	prefixes := m.config.Auth.IgnorePathPrefixes
 	return func(ctx *gin.Context) {
-		if isIgnorePath(ctx.FullPath(), prefixes...) {
+		if isIgnorePath(ctx.Request.URL.String(), prefixes...) {
 			ctx.Next()
 			return
 		}

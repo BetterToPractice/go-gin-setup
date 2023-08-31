@@ -29,6 +29,12 @@ var configDefault = Config{
 		AllowHeaders:  []string{"*"},
 		AllowWildcard: true,
 	},
+	Swagger: &SwaggerConfig{
+		Title:       "Go Gin Setup Docs",
+		Description: "Collection of Endpoints",
+		Version:     "1.0",
+		DocUrl:      "/swagger/*any",
+	},
 }
 
 type Config struct {
@@ -37,6 +43,7 @@ type Config struct {
 	Database *DatabaseConfig `mapstructure:"Database"`
 	Auth     *AuthConfig     `mapstructure:"Auth"`
 	Cors     *CorsConfig     `mapstructure:"Cors"`
+	Swagger  *SwaggerConfig  `mapstructure:"Swagger"`
 }
 
 type CorsConfig struct {
@@ -44,6 +51,13 @@ type CorsConfig struct {
 	AllowMethods  []string `mapstructure:"AllowMethods"`
 	AllowHeaders  []string `mapstructure:"AllowHeaders"`
 	AllowWildcard bool     `mapstructure:"AllowWildcard"`
+}
+
+type SwaggerConfig struct {
+	Title       string `mapstructrue:"Title"`
+	Description string `mapstructure:"Description"`
+	Version     string `mapstructure:"Version"`
+	DocUrl      string `mapstructure:"DocUrl"`
 }
 
 type HttpConfig struct {

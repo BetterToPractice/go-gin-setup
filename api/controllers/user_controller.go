@@ -16,6 +16,15 @@ func NewUserController(userService services.UserService) UserController {
 	}
 }
 
+// List godoc
+//
+//	@Summary		List users
+//	@Description	get list users
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Router			/users/ [get]
+//	@Success		200	{array}	dto.User
 func (c UserController) List(ctx *gin.Context) {
 	users, _ := c.userService.Query()
 	ctx.JSON(200, users)
