@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 type Database struct {
@@ -15,7 +16,11 @@ func NewDatabase(config Config) Database {
 		DSN: config.Database.DSN(),
 	}
 
-	db, err := gorm.Open(postgres.New(dbConfig), &gorm.Config{})
+	db, err := gorm.Open(postgres.New(dbConfig), &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			SingularTable: true,
+		},
+	})
 	if err != nil {
 		fmt.Println("error when connect with database", err)
 	}

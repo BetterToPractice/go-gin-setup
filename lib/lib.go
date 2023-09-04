@@ -7,4 +7,5 @@ var Module = fx.Options(
 	fx.Provide(NewHttpHandler),
 	fx.Provide(NewSwagger),
 	fx.Provide(NewDatabase),
+	fx.Provide(NewMigration),
 )

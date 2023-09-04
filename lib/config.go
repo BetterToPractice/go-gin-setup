@@ -14,8 +14,10 @@ var configDefault = Config{
 		Host: "192.0.0.1",
 		Port: 8080,
 	},
-	Auth:     &AuthConfig{},
-	Database: &DatabaseConfig{},
+	Auth: &AuthConfig{},
+	Database: &DatabaseConfig{
+		MigrationDir: "migrations",
+	},
 	Cors: &CorsConfig{
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{
@@ -66,13 +68,14 @@ type HttpConfig struct {
 }
 
 type DatabaseConfig struct {
-	Name     string `mapstructure:"Name"`
-	Host     string `mapstructure:"Host"`
-	Port     int    `mapstructure:"Port"`
-	Username string `mapstructure:"Username"`
-	Password string `mapstructure:"Password"`
-	SslMode  string `mapstructure:"SslMode"`
-	TimeZone string `mapstructure:"TimeZone"`
+	Name         string `mapstructure:"Name"`
+	Host         string `mapstructure:"Host"`
+	Port         int    `mapstructure:"Port"`
+	Username     string `mapstructure:"Username"`
+	Password     string `mapstructure:"Password"`
+	SslMode      string `mapstructure:"SslMode"`
+	TimeZone     string `mapstructure:"TimeZone"`
+	MigrationDir string `mapstructure:"MigrationDir"`
 }
 
 type AuthConfig struct {

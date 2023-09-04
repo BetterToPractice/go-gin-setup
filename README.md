@@ -1,20 +1,13 @@
 Go Gin Setup
 ===========================================
 
-
-### How to Run
-
-#### Run Others (Postgres)
+### How To Run
 ```shell
 docker-compose up -d --build
-```
-
-#### Run Migrate
-```shell
-go run main.go migrate
-```
-
-#### Run Application
-```shell
 go run main.go runserver
+```
+
+### How to Migration
+```shell
+go run main.go migrate -e up
 ```
