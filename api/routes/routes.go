@@ -6,6 +6,7 @@ var Module = fx.Options(
 	fx.Provide(NewMainRouter),
 	fx.Provide(NewUserRouter),
 	fx.Provide(NewAuthRouter),
+	fx.Provide(NewPostRouter),
 	fx.Provide(NewRoutes),
 )
 
@@ -19,11 +20,13 @@ func NewRoutes(
 	mainRouter MainRouter,
 	userRouter UserRouter,
 	authRouter AuthRouter,
+	postRouter PostRouter,
 ) Routes {
 	return Routes{
 		mainRouter,
 		userRouter,
 		authRouter,
+		postRouter,
 	}
 }
 
