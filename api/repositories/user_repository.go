@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"errors"
+	appErrors "github.com/BetterToPractice/go-gin-setup/errors"
 	"github.com/BetterToPractice/go-gin-setup/lib"
 	"github.com/BetterToPractice/go-gin-setup/models"
 )
@@ -37,7 +38,7 @@ func (r UserRepository) GetByUsername(username string) (*models.User, error) {
 	user := new(models.User)
 
 	if ok, err := QueryOne(r.db.ORM.Preload("Profile").Model(user).Where("username = ?", username), user); err != nil {
-		return nil, errors.New("error Database")
+		return nil, appErrors.RecordNotFound
 	} else if !ok {
 		return nil, errors.New("not Found")
 	}

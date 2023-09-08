@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"errors"
+	appErrors "github.com/BetterToPractice/go-gin-setup/errors"
 	"github.com/BetterToPractice/go-gin-setup/lib"
 	"github.com/BetterToPractice/go-gin-setup/models"
 )
@@ -38,7 +38,7 @@ func (r PostRepository) Get(id string) (*models.Post, error) {
 	if ok, err := QueryOne(r.db.ORM.Preload("User").Model(post).Where("id = ?", id), post); err != nil {
 		return nil, err
 	} else if !ok {
-		return nil, errors.New("not found")
+		return nil, appErrors.RecordNotFound
 	}
 	return post, nil
 }

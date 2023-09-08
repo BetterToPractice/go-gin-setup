@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/BetterToPractice/go-gin-setup/api/services"
 	"github.com/BetterToPractice/go-gin-setup/models"
+	"github.com/BetterToPractice/go-gin-setup/pkg/response"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -20,25 +21,24 @@ func NewPostController(postService services.PostService) PostController {
 func (c PostController) List(ctx *gin.Context) {
 	params := new(models.PostQueryParams)
 	if err := ctx.Bind(params); err != nil {
-		ctx.JSON(http.StatusBadRequest, err.Error())
+		response.Response{Code: http.StatusBadRequest, Message: err}.JSON(ctx)
 		return
 	}
 
 	qr, err := c.postService.Query(params)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, err.Error())
+		response.Response{Code: http.StatusBadRequest, Message: err}.JSON(ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, qr)
+	response.Response{Code: http.StatusOK, Data: qr}.JSON(ctx)
 }
 
 func (c PostController) Detail(ctx *gin.Context) {
 	qr, err := c.postService.Get(ctx.Param("id"))
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, err.Error())
+		response.Response{Code: http.StatusNotFound, Message: err}.JSON(ctx)
 		return
 	}
-
-	ctx.JSON(http.StatusOK, qr)
+	response.Response{Code: http.StatusOK, Data: qr}.JSON(ctx)
 }

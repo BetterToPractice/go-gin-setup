@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/BetterToPractice/go-gin-setup/api/services"
 	"github.com/BetterToPractice/go-gin-setup/models"
+	"github.com/BetterToPractice/go-gin-setup/pkg/response"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -29,24 +30,25 @@ func NewUserController(userService services.UserService) UserController {
 func (c UserController) List(ctx *gin.Context) {
 	params := new(models.UserQueryParams)
 	if err := ctx.Bind(params); err != nil {
-		ctx.JSON(http.StatusBadRequest, err.Error())
+		response.Response{Code: http.StatusBadRequest, Message: err}.JSON(ctx)
 		return
 	}
 
 	qr, err := c.userService.Query(params)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, err.Error())
+		response.Response{Code: http.StatusBadRequest, Message: err}.JSON(ctx)
 		return
 	}
 
-	ctx.JSON(200, qr)
+	response.Response{Code: http.StatusOK, Data: qr}.JSON(ctx)
 }
 
 func (c UserController) Detail(ctx *gin.Context) {
-	user, err := c.userService.GetByUsername(ctx.Param("username"))
+	qr, err := c.userService.GetByUsername(ctx.Param("username"))
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, err.Error())
+		response.Response{Code: http.StatusNotFound, Message: err}.JSON(ctx)
 		return
 	}
-	ctx.JSON(http.StatusOK, user)
+
+	response.Response{Code: http.StatusOK, Data: qr}.JSON(ctx)
 }
