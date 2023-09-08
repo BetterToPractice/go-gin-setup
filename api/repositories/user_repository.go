@@ -17,7 +17,7 @@ func NewUserRepository(db lib.Database) UserRepository {
 }
 
 func (r UserRepository) Query(params *models.UserQueryParams) (*models.UserPaginationResult, error) {
-	db := r.db.ORM.Model(&models.User{})
+	db := r.db.ORM.Preload("Profile").Model(&models.User{})
 	list := make(models.Users, 0)
 
 	pagination, err := QueryPagination(db, params.PaginationParam, &list)
@@ -36,7 +36,7 @@ func (r UserRepository) Query(params *models.UserQueryParams) (*models.UserPagin
 func (r UserRepository) GetByUsername(username string) (*models.User, error) {
 	user := new(models.User)
 
-	if ok, err := QueryOne(r.db.ORM.Model(user).Where("username = ?", username), user); err != nil {
+	if ok, err := QueryOne(r.db.ORM.Preload("Profile").Model(user).Where("username = ?", username), user); err != nil {
 		return nil, errors.New("error Database")
 	} else if !ok {
 		return nil, errors.New("not Found")
