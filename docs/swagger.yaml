@@ -51,6 +51,22 @@ paths:
       tags:
       - post
   /posts/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete a post
+      parameters:
+      - description: post id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Delete a post
+      tags:
+      - post
     get:
       consumes:
       - application/json
@@ -99,6 +115,22 @@ paths:
       tags:
       - user
   /users/{username}:
+    delete:
+      consumes:
+      - application/json
+      description: perform delete a user by username
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Delete a User
+      tags:
+      - user
     get:
       consumes:
       - application/json

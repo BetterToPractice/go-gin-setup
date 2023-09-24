@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"errors"
 	appErrors "github.com/BetterToPractice/go-gin-setup/errors"
 	"github.com/BetterToPractice/go-gin-setup/lib"
 	"github.com/BetterToPractice/go-gin-setup/models"
@@ -41,4 +42,12 @@ func (r PostRepository) Get(id string) (*models.Post, error) {
 		return nil, appErrors.RecordNotFound
 	}
 	return post, nil
+}
+
+func (r PostRepository) Delete(id string) error {
+	post := new(models.Post)
+	if err := r.db.ORM.Model(post).Where("id = ?", id).Delete(post).Error; err != nil {
+		return errors.New("invalid, problem with internal")
+	}
+	return nil
 }

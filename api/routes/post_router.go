@@ -20,4 +20,5 @@ func NewPostRouter(handler lib.HttpHandler, postController controllers.PostContr
 func (r PostRouter) Setup() {
 	r.handler.Engine.GET("/posts", r.postController.List)
 	r.handler.Engine.GET("/posts/:id", r.postController.Detail)
+	r.handler.Engine.DELETE("/posts/:id", r.postController.Destroy)
 }

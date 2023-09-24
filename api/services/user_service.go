@@ -5,17 +5,20 @@ import (
 	"github.com/BetterToPractice/go-gin-setup/api/repositories"
 	"github.com/BetterToPractice/go-gin-setup/lib"
 	"github.com/BetterToPractice/go-gin-setup/models"
+	"strconv"
 )
 
 type UserService struct {
-	db             lib.Database
-	userRepository repositories.UserRepository
+	db                lib.Database
+	userRepository    repositories.UserRepository
+	profileRepository repositories.ProfileRepository
 }
 
-func NewUserService(db lib.Database, userRepository repositories.UserRepository) UserService {
+func NewUserService(db lib.Database, userRepository repositories.UserRepository, profileRepository repositories.ProfileRepository) UserService {
 	return UserService{
-		db:             db,
-		userRepository: userRepository,
+		db:                db,
+		userRepository:    userRepository,
+		profileRepository: profileRepository,
 	}
 }
 
@@ -44,4 +47,20 @@ func (s UserService) Query(params *models.UserQueryParams) (*models.UserPaginati
 
 func (s UserService) GetByUsername(username string) (*models.User, error) {
 	return s.userRepository.GetByUsername(username)
+}
+
+func (s UserService) Delete(username string) error {
+	user, err := s.userRepository.GetByUsername(username)
+	if err != nil {
+		return err
+	}
+
+	if err := s.profileRepository.DeleteByUserID(strconv.Itoa(int(user.ID))); err != nil {
+		return err
+	}
+	if err := s.userRepository.Delete(username); err != nil {
+		return err
+	}
+
+	return nil
 }

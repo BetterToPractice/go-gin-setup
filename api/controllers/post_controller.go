@@ -63,3 +63,21 @@ func (c PostController) Detail(ctx *gin.Context) {
 
 	response.Response{Code: http.StatusOK, Data: qr}.JSON(ctx)
 }
+
+// Destroy godoc
+//
+//	@Summary		Delete a post
+//	@Description	delete a post
+//	@Param 			id path string true "post id"
+//	@Tags			post
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Router			/posts/{id} [delete]
+func (c PostController) Destroy(ctx *gin.Context) {
+	err := c.postService.Delete(ctx.Param("id"))
+	if err != nil {
+		response.Response{Code: http.StatusBadRequest, Message: err}.JSON(ctx)
+		return
+	}
+	response.Response{Code: http.StatusNoContent}.JSON(ctx)
+}
