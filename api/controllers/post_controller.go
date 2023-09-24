@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/BetterToPractice/go-gin-setup/api/services"
 	"github.com/BetterToPractice/go-gin-setup/models"
 	"github.com/BetterToPractice/go-gin-setup/pkg/response"
@@ -18,9 +19,19 @@ func NewPostController(postService services.PostService) PostController {
 	}
 }
 
+// List godoc
+//
+//	@Summary		List of posts
+//	@Description	get list of posts
+//	@Tags			post
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Router			/posts [get]
 func (c PostController) List(ctx *gin.Context) {
 	params := new(models.PostQueryParams)
-	if err := ctx.Bind(params); err != nil {
+
+	if err := ctx.ShouldBindQuery(params); err != nil {
+		fmt.Println(err.Error())
 		response.Response{Code: http.StatusBadRequest, Message: err}.JSON(ctx)
 		return
 	}
@@ -34,11 +45,21 @@ func (c PostController) List(ctx *gin.Context) {
 	response.Response{Code: http.StatusOK, Data: qr}.JSON(ctx)
 }
 
+// Detail godoc
+//
+//	@Summary		Detail a post
+//	@Description	get detail a post
+//	@Param 			id path string true "post id"
+//	@Tags			post
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Router			/posts/{id} [get]
 func (c PostController) Detail(ctx *gin.Context) {
 	qr, err := c.postService.Get(ctx.Param("id"))
 	if err != nil {
 		response.Response{Code: http.StatusNotFound, Message: err}.JSON(ctx)
 		return
 	}
+
 	response.Response{Code: http.StatusOK, Data: qr}.JSON(ctx)
 }

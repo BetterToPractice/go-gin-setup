@@ -19,6 +19,15 @@ func NewAuthController(authService services.AuthService, userService services.Us
 	}
 }
 
+// Register godoc
+//
+//	@Summary		Register a new User
+//	@Description	register a new user
+//	@Tags			auth
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Router			/register [post]
+//	@Success		200  {object}  response.Response{data=dto.RegisterResponse}  "ok"
 func (c AuthController) Register(ctx *gin.Context) {
 	register := new(dto.Register)
 	if err := ctx.ShouldBind(register); err != nil {
@@ -38,6 +47,15 @@ func (c AuthController) Register(ctx *gin.Context) {
 	})
 }
 
+// Login godoc
+//
+//	@Summary		Login a User
+//	@Description	Login a user's application
+//	@Tags			auth
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Router			/login [post]
+//	@Success		200  {object}  response.Response{data=dto.JwtResponse}  "ok"
 func (c AuthController) Login(ctx *gin.Context) {
 	login := new(dto.Login)
 	if err := ctx.ShouldBind(login); err != nil {

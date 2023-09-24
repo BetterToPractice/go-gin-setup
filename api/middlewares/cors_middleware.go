@@ -15,13 +15,13 @@ func NewCorsMiddleware(config lib.Config, handler lib.HttpHandler) CorsMiddlewar
 	}
 }
 
-func (c CorsMiddleware) Setup() {
-	c.handler.Engine.Use(
+func (m CorsMiddleware) Setup() {
+	m.handler.Engine.Use(
 		cors.New(cors.Config{
-			AllowOrigins:  c.config.Cors.AllowOrigins,
-			AllowMethods:  c.config.Cors.AllowMethods,
-			AllowHeaders:  c.config.Cors.AllowHeaders,
-			AllowWildcard: c.config.Cors.AllowWildcard,
+			AllowOrigins:  m.config.Cors.AllowOrigins,
+			AllowMethods:  m.config.Cors.AllowMethods,
+			AllowHeaders:  m.config.Cors.AllowHeaders,
+			AllowWildcard: m.config.Cors.AllowWildcard,
 		}),
 	)
 }

@@ -21,6 +21,7 @@ Auth:
     - /register
     - /swagger
     - /posts
+    - /posts/{id}
 
 Cors:
   AllowOrigins:

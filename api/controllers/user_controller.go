@@ -20,16 +20,15 @@ func NewUserController(userService services.UserService) UserController {
 
 // List godoc
 //
-//	@Summary		List users
-//	@Description	get list users
-//	@Tags			users
-//	@Accept			json
-//	@Produce		json
-//	@Router			/users/ [get]
-//	@Success		200	{array}	dto.User
+//	@Summary		List several users
+//	@Description	get list several users
+//	@Tags			user
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Router			/users [get]
 func (c UserController) List(ctx *gin.Context) {
 	params := new(models.UserQueryParams)
-	if err := ctx.Bind(params); err != nil {
+	if err := ctx.ShouldBindQuery(params); err != nil {
 		response.Response{Code: http.StatusBadRequest, Message: err}.JSON(ctx)
 		return
 	}
@@ -43,6 +42,15 @@ func (c UserController) List(ctx *gin.Context) {
 	response.Response{Code: http.StatusOK, Data: qr}.JSON(ctx)
 }
 
+// Detail godoc
+//
+//	@Summary		Get a User
+//	@Description	get a user by username
+//	@Tags			user
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Param			username  path  string  true  "Username"
+//	@Router			/users/{username} [get]
 func (c UserController) Detail(ctx *gin.Context) {
 	qr, err := c.userService.GetByUsername(ctx.Param("username"))
 	if err != nil {

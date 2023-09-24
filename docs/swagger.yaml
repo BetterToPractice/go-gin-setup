@@ -1,29 +1,120 @@
 definitions:
-  dto.User:
+  dto.JwtResponse:
+    properties:
+      access:
+        type: string
+    required:
+    - access
+    type: object
+  dto.RegisterResponse:
     properties:
       email:
         type: string
       username:
         type: string
     type: object
+  response.Response:
+    properties:
+      data: {}
+      message: {}
+    type: object
 info:
   contact: {}
 paths:
-  /users/:
-    get:
+  /login:
+    post:
       consumes:
       - application/json
-      description: get list users
+      description: Login a user's application
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: ok
           schema:
-            items:
-              $ref: '#/definitions/dto.User'
-            type: array
-      summary: List users
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.JwtResponse'
+              type: object
+      summary: Login a User
       tags:
-      - users
+      - auth
+  /posts:
+    get:
+      consumes:
+      - application/json
+      description: get list of posts
+      produces:
+      - application/json
+      responses: {}
+      summary: List of posts
+      tags:
+      - post
+  /posts/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get detail a post
+      parameters:
+      - description: post id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Detail a post
+      tags:
+      - post
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: register a new user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.RegisterResponse'
+              type: object
+      summary: Register a new User
+      tags:
+      - auth
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: get list several users
+      produces:
+      - application/json
+      responses: {}
+      summary: List several users
+      tags:
+      - user
+  /users/{username}:
+    get:
+      consumes:
+      - application/json
+      description: get a user by username
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Get a User
+      tags:
+      - user
 swagger: "2.0"
