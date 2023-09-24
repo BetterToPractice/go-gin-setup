@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/BetterToPractice/go-gin-setup/api/services"
 	"github.com/BetterToPractice/go-gin-setup/models/dto"
+	"github.com/BetterToPractice/go-gin-setup/pkg/response"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -31,13 +32,19 @@ func NewAuthController(authService services.AuthService, userService services.Us
 func (c AuthController) Register(ctx *gin.Context) {
 	register := new(dto.Register)
 	if err := ctx.ShouldBind(register); err != nil {
-		ctx.JSON(http.StatusBadRequest, err.Error())
+		response.Response{
+			Code:    http.StatusBadRequest,
+			Message: err,
+		}.JSON(ctx)
 		return
 	}
 
 	_, err := c.userService.Register(register.Username, register.Password, register.Email)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, err.Error())
+		response.Response{
+			Code:    http.StatusBadRequest,
+			Message: err,
+		}.JSON(ctx)
 		return
 	}
 
@@ -55,25 +62,25 @@ func (c AuthController) Register(ctx *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Router			/login [post]
-//	@Success		200  {object}  response.Response{data=dto.JwtResponse}  "ok"
+//	@Success		200  {object}  response.Response{data=dto.LoginResponse}  "ok"
 func (c AuthController) Login(ctx *gin.Context) {
 	login := new(dto.Login)
 	if err := ctx.ShouldBind(login); err != nil {
-		ctx.JSON(http.StatusBadRequest, err.Error())
+		response.Response{
+			Code:    http.StatusBadRequest,
+			Message: err,
+		}.JSON(ctx)
 		return
 	}
 
-	user, err := c.userService.Verify(login.Username, login.Password)
+	token, err := c.authService.Login(login)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, err.Error())
+		response.Response{
+			Code:    http.StatusBadRequest,
+			Message: err,
+		}.JSON(ctx)
 		return
 	}
 
-	token, err := c.authService.GenerateToken(user)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
-
-	ctx.JSON(http.StatusOK, dto.JwtResponse{Access: token})
+	ctx.JSON(http.StatusOK, token)
 }

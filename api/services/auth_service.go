@@ -11,8 +11,9 @@ import (
 )
 
 type AuthService struct {
-	config lib.Config
-	opts   *options
+	config      lib.Config
+	opts        *options
+	userService UserService
 }
 
 type options struct {
@@ -23,13 +24,13 @@ type options struct {
 	expired       int
 }
 
-func NewAuthService(config lib.Config) AuthService {
+func NewAuthService(config lib.Config, userService UserService) AuthService {
 	signingKey := fmt.Sprintf("jwt:%s", config.Name)
 	opts := &options{
 		issuer:        config.Name,
 		expired:       config.Auth.TokenExpired,
 		signingMethod: jwt.SigningMethodHS512,
-		signingKey:    []byte(fmt.Sprintf("jwt:%s", config.Name)),
+		signingKey:    []byte(signingKey),
 		keyfunc: func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, errors.New("invalid Token")
@@ -39,8 +40,9 @@ func NewAuthService(config lib.Config) AuthService {
 	}
 
 	return AuthService{
-		config: config,
-		opts:   opts,
+		config:      config,
+		opts:        opts,
+		userService: userService,
 	}
 }
 
@@ -71,4 +73,18 @@ func (s AuthService) ParseToken(tokenString string) (*dto.JwtClaims, error) {
 		}
 	}
 	return nil, errors.New("invalid token")
+}
+
+func (s AuthService) Login(login *dto.Login) (*dto.LoginResponse, error) {
+	user, err := s.userService.Verify(login.Username, login.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	access, err := s.GenerateToken(user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.LoginResponse{Access: access}, nil
 }

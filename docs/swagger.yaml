@@ -1,10 +1,8 @@
 definitions:
-  dto.JwtResponse:
+  dto.LoginResponse:
     properties:
       access:
         type: string
-    required:
-    - access
     type: object
   dto.RegisterResponse:
     properties:
@@ -36,7 +34,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.JwtResponse'
+                  $ref: '#/definitions/dto.LoginResponse'
               type: object
       summary: Login a User
       tags:

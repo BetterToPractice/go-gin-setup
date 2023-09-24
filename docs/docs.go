@@ -40,7 +40,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.JwtResponse"
+                                            "$ref": "#/definitions/dto.LoginResponse"
                                         }
                                     }
                                 }
@@ -169,11 +169,8 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dto.JwtResponse": {
+        "dto.LoginResponse": {
             "type": "object",
-            "required": [
-                "access"
-            ],
             "properties": {
                 "access": {
                     "type": "string"
