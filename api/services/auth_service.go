@@ -3,9 +3,11 @@ package services
 import (
 	"errors"
 	"fmt"
+	"github.com/BetterToPractice/go-gin-setup/constants"
 	"github.com/BetterToPractice/go-gin-setup/lib"
 	"github.com/BetterToPractice/go-gin-setup/models"
 	"github.com/BetterToPractice/go-gin-setup/models/dto"
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"time"
 )
@@ -87,4 +89,18 @@ func (s AuthService) Login(login *dto.Login) (*dto.LoginResponse, error) {
 	}
 
 	return &dto.LoginResponse{Access: access}, nil
+}
+
+func (s AuthService) Authorize(ctx *gin.Context) (*models.User, error) {
+	claims, _ := ctx.Get(constants.CurrentUser)
+	jwtClaims, _ := claims.(*dto.JwtClaims)
+	if jwtClaims == nil {
+		return nil, errors.New("unauthorized")
+	}
+
+	if user, err := s.userService.GetByUsername(jwtClaims.Username); err != nil {
+		return nil, err
+	} else {
+		return user, nil
+	}
 }
