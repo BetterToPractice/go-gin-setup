@@ -49,16 +49,11 @@ func (s UserService) GetByUsername(username string) (*models.User, error) {
 	return s.userRepository.GetByUsername(username)
 }
 
-func (s UserService) Delete(username string) error {
-	user, err := s.userRepository.GetByUsername(username)
-	if err != nil {
-		return err
-	}
-
+func (s UserService) Delete(user *models.User) error {
 	if err := s.profileRepository.DeleteByUserID(strconv.Itoa(int(user.ID))); err != nil {
 		return err
 	}
-	if err := s.userRepository.Delete(username); err != nil {
+	if err := s.userRepository.Delete(user); err != nil {
 		return err
 	}
 

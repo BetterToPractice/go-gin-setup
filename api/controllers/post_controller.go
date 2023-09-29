@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"fmt"
+	"github.com/BetterToPractice/go-gin-setup/api/policies"
 	"github.com/BetterToPractice/go-gin-setup/api/services"
 	"github.com/BetterToPractice/go-gin-setup/models"
 	"github.com/BetterToPractice/go-gin-setup/models/dto"
@@ -14,13 +14,15 @@ type PostController struct {
 	postService services.PostService
 	userService services.UserService
 	authService services.AuthService
+	postPolicy  policies.PostPolicy
 }
 
-func NewPostController(postService services.PostService, userService services.UserService, authService services.AuthService) PostController {
+func NewPostController(postService services.PostService, userService services.UserService, authService services.AuthService, postPolicy policies.PostPolicy) PostController {
 	return PostController{
 		postService: postService,
 		userService: userService,
 		authService: authService,
+		postPolicy:  postPolicy,
 	}
 }
 
@@ -36,7 +38,6 @@ func (c PostController) List(ctx *gin.Context) {
 	params := new(models.PostQueryParams)
 
 	if err := ctx.ShouldBindQuery(params); err != nil {
-		fmt.Println(err.Error())
 		response.Response{Code: http.StatusBadRequest, Message: err}.JSON(ctx)
 		return
 	}
@@ -66,6 +67,12 @@ func (c PostController) Detail(ctx *gin.Context) {
 		return
 	}
 
+	user, err := c.authService.Authenticate(ctx)
+	if canView, err := c.postPolicy.CanViewDetail(user, qr); !canView {
+		response.Response{Code: http.StatusUnauthorized, Message: err}.JSON(ctx)
+		return
+	}
+
 	response.Response{Code: http.StatusOK, Data: qr}.JSON(ctx)
 }
 
@@ -79,8 +86,8 @@ func (c PostController) Detail(ctx *gin.Context) {
 //	@Param 			data body dto.PostRequest true "Post"
 //	@Router			/posts [post]
 func (c PostController) Create(ctx *gin.Context) {
-	user, err := c.authService.Authorize(ctx)
-	if err != nil {
+	user, _ := c.authService.Authenticate(ctx)
+	if isCan, err := c.postPolicy.CanCreate(user); !isCan {
 		response.Response{Code: http.StatusUnauthorized, Message: err}.JSON(ctx)
 		return
 	}
@@ -112,15 +119,15 @@ func (c PostController) Create(ctx *gin.Context) {
 //	@Router			/posts/{id} [patch]
 //	@Success		200  {object}  response.Response{data=dto.PostResponse}  "ok"
 func (c PostController) Update(ctx *gin.Context) {
-	_, err := c.authService.Authorize(ctx)
-	if err != nil {
-		response.Response{Code: http.StatusUnauthorized, Message: err}.JSON(ctx)
-		return
-	}
-
 	post, err := c.postService.Get(ctx.Param("id"))
 	if err != nil {
 		response.Response{Code: http.StatusNotFound, Message: err}.JSON(ctx)
+		return
+	}
+
+	user, _ := c.authService.Authenticate(ctx)
+	if isCan, err := c.postPolicy.CanUpdate(user, post); !isCan {
+		response.Response{Code: http.StatusUnauthorized, Message: err}.JSON(ctx)
 		return
 	}
 
@@ -149,10 +156,22 @@ func (c PostController) Update(ctx *gin.Context) {
 //	@Produce		application/json
 //	@Router			/posts/{id} [delete]
 func (c PostController) Destroy(ctx *gin.Context) {
-	err := c.postService.Delete(ctx.Param("id"))
+	post, err := c.postService.Get(ctx.Param("id"))
 	if err != nil {
+		response.Response{Code: http.StatusNotFound, Message: err}.JSON(ctx)
+		return
+	}
+
+	user, _ := c.authService.Authenticate(ctx)
+	if isCan, err := c.postPolicy.CanDelete(user, post); !isCan {
+		response.Response{Code: http.StatusUnauthorized, Message: err}.JSON(ctx)
+		return
+	}
+
+	if err := c.postService.Delete(post); err != nil {
 		response.Response{Code: http.StatusBadRequest, Message: err}.JSON(ctx)
 		return
 	}
+
 	response.Response{Code: http.StatusNoContent}.JSON(ctx)
 }

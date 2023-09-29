@@ -91,7 +91,7 @@ func (s AuthService) Login(login *dto.Login) (*dto.LoginResponse, error) {
 	return &dto.LoginResponse{Access: access}, nil
 }
 
-func (s AuthService) Authorize(ctx *gin.Context) (*models.User, error) {
+func (s AuthService) Authenticate(ctx *gin.Context) (*models.User, error) {
 	claims, _ := ctx.Get(constants.CurrentUser)
 	jwtClaims, _ := claims.(*dto.JwtClaims)
 	if jwtClaims == nil {
