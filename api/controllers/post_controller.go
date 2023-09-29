@@ -83,6 +83,7 @@ func (c PostController) Detail(ctx *gin.Context) {
 //	@Tags			post
 //	@Accept			application/json
 //	@Produce		application/json
+//	@Security 		BearerAuth
 //	@Param 			data body dto.PostRequest true "Post"
 //	@Router			/posts [post]
 func (c PostController) Create(ctx *gin.Context) {
@@ -115,6 +116,7 @@ func (c PostController) Create(ctx *gin.Context) {
 //	@Tags			post
 //	@Accept			application/json
 //	@Produce		application/json
+//	@Security 		BearerAuth
 //	@Param 			data body dto.PostUpdateRequest true "Post"
 //	@Router			/posts/{id} [patch]
 //	@Success		200  {object}  response.Response{data=dto.PostResponse}  "ok"
@@ -154,6 +156,7 @@ func (c PostController) Update(ctx *gin.Context) {
 //	@Tags			post
 //	@Accept			application/json
 //	@Produce		application/json
+//	@Security 		BearerAuth
 //	@Router			/posts/{id} [delete]
 func (c PostController) Destroy(ctx *gin.Context) {
 	post, err := c.postService.Get(ctx.Param("id"))

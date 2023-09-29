@@ -59,6 +59,7 @@ type SwaggerConfig struct {
 	Title       string `mapstructrue:"Title"`
 	Description string `mapstructure:"Description"`
 	Version     string `mapstructure:"Version"`
+	PathUrl     string `mapstructure:"PathUrl"`
 	DocUrl      string `mapstructure:"DocUrl"`
 }
 
