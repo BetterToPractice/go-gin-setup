@@ -34,21 +34,6 @@ func (s UserService) Verify(username, password string) (*models.User, error) {
 	return user, err
 }
 
-func (s UserService) Register(username, password, email string) (*models.User, error) {
-	user := &models.User{
-		Username: username,
-		Password: models.HashPassword(password),
-		Email:    email,
-	}
-	if err := s.db.ORM.Create(&user).Error; err != nil {
-		return nil, err
-	}
-
-	s.authMail.Register(user)
-
-	return user, nil
-}
-
 func (s UserService) Query(params *models.UserQueryParams) (*models.UserPaginationResult, error) {
 	return s.userRepository.Query(params)
 }

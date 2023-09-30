@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"fmt"
+	"github.com/BetterToPractice/go-gin-setup/api/mails"
 	"github.com/BetterToPractice/go-gin-setup/constants"
 	"github.com/BetterToPractice/go-gin-setup/lib"
 	"github.com/BetterToPractice/go-gin-setup/models"
@@ -16,6 +17,8 @@ type AuthService struct {
 	config      lib.Config
 	opts        *options
 	userService UserService
+	authMail    mails.AuthMail
+	db          lib.Database
 }
 
 type options struct {
@@ -26,7 +29,7 @@ type options struct {
 	expired       int
 }
 
-func NewAuthService(config lib.Config, userService UserService) AuthService {
+func NewAuthService(config lib.Config, userService UserService, authMail mails.AuthMail, db lib.Database) AuthService {
 	signingKey := fmt.Sprintf("jwt:%s", config.Name)
 	opts := &options{
 		issuer:        config.Name,
@@ -45,6 +48,8 @@ func NewAuthService(config lib.Config, userService UserService) AuthService {
 		config:      config,
 		opts:        opts,
 		userService: userService,
+		authMail:    authMail,
+		db:          db,
 	}
 }
 
@@ -75,6 +80,21 @@ func (s AuthService) ParseToken(tokenString string) (*dto.JwtClaims, error) {
 		}
 	}
 	return nil, errors.New("invalid token")
+}
+
+func (s AuthService) Register(username, password, email string) (*models.User, error) {
+	user := &models.User{
+		Username: username,
+		Password: models.HashPassword(password),
+		Email:    email,
+	}
+	if err := s.db.ORM.Create(&user).Error; err != nil {
+		return nil, err
+	}
+
+	s.authMail.Register(user)
+
+	return user, nil
 }
 
 func (s AuthService) Login(login *dto.Login) (*dto.LoginResponse, error) {
