@@ -33,3 +33,12 @@ Swagger:
   Version: "1.0"
   PathUrl: "/swagger/*any"
   DocUrl: "/swagger/index.html"
+
+Mail:
+  Enable: false
+  Host: smtp.gmail.com
+  Port: 587
+  User: example@gmail.com
+  Password: secret
+  UseTLS: true
+  FromEmail: NoReply <noreply@example.com>

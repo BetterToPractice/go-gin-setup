@@ -38,6 +38,15 @@ var configDefault = Config{
 		PathUrl:     "/swagger/*any",
 		DocUrl:      "/swagger/index.html",
 	},
+	Mail: &MailConfig{
+		Enable:    false,
+		Host:      "smtp.gmail.com",
+		Port:      587,
+		User:      "user",
+		Password:  "password",
+		UseTLS:    true,
+		FromEmail: "NoReply <noreply@example.com>",
+	},
 }
 
 type Config struct {
@@ -47,6 +56,7 @@ type Config struct {
 	Auth     *AuthConfig     `mapstructure:"Auth"`
 	Cors     *CorsConfig     `mapstructure:"Cors"`
 	Swagger  *SwaggerConfig  `mapstructure:"Swagger"`
+	Mail     *MailConfig     `mapstructure:"Mail"`
 }
 
 type CorsConfig struct {
@@ -84,6 +94,16 @@ type AuthConfig struct {
 	Enable             string   `mapstructure:"Enable"`
 	TokenExpired       int      `mapstructure:"TokenExpired"`
 	IgnorePathPrefixes []string `mapstructure:"IgnorePathPrefixes"`
+}
+
+type MailConfig struct {
+	Enable    bool   `mapstructure:"Enable"`
+	Host      string `mapstructure:"Host"`
+	Port      int    `mapstructure:"Port"`
+	User      string `mapstructure:"User"`
+	Password  string `mapstructure:"Password"`
+	UseTLS    bool   `mapstructure:"UseTLS"`
+	FromEmail string `mapstructure:"FromEmail"`
 }
 
 func NewConfig() Config {

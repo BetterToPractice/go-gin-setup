@@ -34,7 +34,12 @@ func (m AuthMiddleware) core() gin.HandlerFunc {
 			token = auth[len(prefix):]
 		}
 
-		claims, _ := m.authService.ParseToken(token)
+		claims, err := m.authService.ParseToken(token)
+		if err != nil {
+			ctx.Next()
+			return
+		}
+
 		ctx.Set(constants.CurrentUser, claims)
 		ctx.Next()
 	}
