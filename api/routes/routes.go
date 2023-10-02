@@ -4,6 +4,7 @@ import "go.uber.org/fx"
 
 var Module = fx.Options(
 	fx.Provide(NewMainRouter),
+	fx.Provide(NewSwaggerRouter),
 	fx.Provide(NewUserRouter),
 	fx.Provide(NewAuthRouter),
 	fx.Provide(NewPostRouter),
@@ -18,12 +19,14 @@ type Routes []IRoute
 
 func NewRoutes(
 	mainRouter MainRouter,
+	swaggerRouter SwaggerRouter,
 	userRouter UserRouter,
 	authRouter AuthRouter,
 	postRouter PostRouter,
 ) Routes {
 	return Routes{
 		mainRouter,
+		swaggerRouter,
 		userRouter,
 		authRouter,
 		postRouter,

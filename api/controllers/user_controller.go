@@ -71,8 +71,9 @@ func (c UserController) Detail(ctx *gin.Context) {
 //	@Summary		Delete a User
 //	@Description	perform delete a user by username
 //	@Tags			user
-//	@Accept			json
-//	@Produce		json
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Security 		BearerAuth
 //	@Param			username  path  string  true  "Username"
 //	@Router			/users/{username} [delete]
 func (c UserController) Destroy(ctx *gin.Context) {
