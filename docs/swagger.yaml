@@ -14,6 +14,20 @@ definitions:
     - body
     - title
     type: object
+  dto.PostResponse:
+    properties:
+      body:
+        type: string
+      title:
+        type: string
+    type: object
+  dto.PostUpdateRequest:
+    properties:
+      body:
+        type: string
+      title:
+        type: string
+    type: object
   dto.RegisterResponse:
     properties:
       email:
@@ -108,6 +122,37 @@ paths:
       - application/json
       responses: {}
       summary: Detail a post
+      tags:
+      - post
+    patch:
+      consumes:
+      - application/json
+      description: update a post
+      parameters:
+      - description: post id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Post
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PostUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.PostResponse'
+              type: object
+      summary: Update a post
       tags:
       - post
   /register:
