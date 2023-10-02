@@ -40,7 +40,7 @@ func (c AuthController) Register(ctx *gin.Context) {
 		return
 	}
 
-	_, err := c.userService.Register(register.Username, register.Password, register.Email)
+	_, err := c.authService.Register(register.Username, register.Password, register.Email)
 	if err != nil {
 		response.Response{
 			Code:    http.StatusBadRequest,

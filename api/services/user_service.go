@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"github.com/BetterToPractice/go-gin-setup/api/mails"
 	"github.com/BetterToPractice/go-gin-setup/api/repositories"
 	"github.com/BetterToPractice/go-gin-setup/lib"
 	"github.com/BetterToPractice/go-gin-setup/models"
@@ -12,13 +13,15 @@ type UserService struct {
 	db                lib.Database
 	userRepository    repositories.UserRepository
 	profileRepository repositories.ProfileRepository
+	authMail          mails.AuthMail
 }
 
-func NewUserService(db lib.Database, userRepository repositories.UserRepository, profileRepository repositories.ProfileRepository) UserService {
+func NewUserService(db lib.Database, userRepository repositories.UserRepository, profileRepository repositories.ProfileRepository, authMail mails.AuthMail) UserService {
 	return UserService{
 		db:                db,
 		userRepository:    userRepository,
 		profileRepository: profileRepository,
+		authMail:          authMail,
 	}
 }
 
@@ -28,16 +31,6 @@ func (s UserService) Verify(username, password string) (*models.User, error) {
 	if err != nil || user.Password != models.HashPassword(password) {
 		return nil, errors.New("username or password not match")
 	}
-	return user, err
-}
-
-func (s UserService) Register(username, password, email string) (*models.User, error) {
-	user := &models.User{
-		Username: username,
-		Password: models.HashPassword(password),
-		Email:    email,
-	}
-	err := s.db.ORM.Create(&user).Error
 	return user, err
 }
 

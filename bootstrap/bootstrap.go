@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/BetterToPractice/go-gin-setup/api/controllers"
+	"github.com/BetterToPractice/go-gin-setup/api/mails"
 	"github.com/BetterToPractice/go-gin-setup/api/middlewares"
 	"github.com/BetterToPractice/go-gin-setup/api/policies"
 	"github.com/BetterToPractice/go-gin-setup/api/repositories"
@@ -15,6 +16,7 @@ import (
 
 var Module = fx.Options(
 	lib.Module,
+	mails.Module,
 	controllers.Module,
 	routes.Module,
 	middlewares.Module,
