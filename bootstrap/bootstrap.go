@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/BetterToPractice/go-gin-setup/api/controllers"
 	"github.com/BetterToPractice/go-gin-setup/api/middlewares"
+	"github.com/BetterToPractice/go-gin-setup/api/policies"
 	"github.com/BetterToPractice/go-gin-setup/api/repositories"
 	"github.com/BetterToPractice/go-gin-setup/api/routes"
 	"github.com/BetterToPractice/go-gin-setup/api/services"
@@ -18,6 +19,7 @@ var Module = fx.Options(
 	routes.Module,
 	middlewares.Module,
 	repositories.Module,
+	policies.Module,
 	services.Module,
 	fx.Invoke(bootstrap),
 )
