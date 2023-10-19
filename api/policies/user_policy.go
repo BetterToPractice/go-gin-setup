@@ -1,7 +1,7 @@
 package policies
 
 import (
-	"errors"
+	appErrors "github.com/BetterToPractice/go-gin-setup/errors"
 	"github.com/BetterToPractice/go-gin-setup/models"
 )
 
@@ -22,21 +22,27 @@ func (p UserPolicy) CanViewDetail(_ *models.User, _ *models.Post) (bool, error) 
 
 func (p UserPolicy) CanCreate(user *models.User) (bool, error) {
 	if user == nil {
-		return false, errors.New("unauthorized")
+		return false, appErrors.Unauthorized
 	}
 	return true, nil
 }
 
 func (p UserPolicy) CanUpdate(user *models.User, post *models.Post) (bool, error) {
-	if user == nil || post.UserID != user.ID {
-		return false, errors.New("unauthorized")
+	if user == nil {
+		return false, appErrors.Unauthorized
+	}
+	if post.UserID != user.ID {
+		return false, appErrors.Forbidden
 	}
 	return true, nil
 }
 
 func (p UserPolicy) CanDelete(loggedInUser *models.User, user *models.User) (bool, error) {
-	if loggedInUser == nil || loggedInUser.ID != user.ID {
-		return false, errors.New("unauthorized")
+	if loggedInUser == nil {
+		return false, appErrors.Unauthorized
+	}
+	if loggedInUser.ID != user.ID {
+		return false, appErrors.Forbidden
 	}
 	return true, nil
 }

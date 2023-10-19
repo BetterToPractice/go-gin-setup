@@ -23,7 +23,7 @@ func (r PostRepository) Query(params *models.PostQueryParams) (*models.PostPagin
 
 	pagination, err := QueryPagination(db, params.PaginationParam, &list)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(appErrors.DatabaseInternalError, err)
 	}
 
 	qr := &models.PostPaginationResult{
@@ -39,28 +39,28 @@ func (r PostRepository) Get(id string) (*models.Post, error) {
 	if ok, err := QueryOne(r.db.ORM.Preload("User").Model(post).Where("id = ?", id), post); err != nil {
 		return nil, err
 	} else if !ok {
-		return nil, appErrors.RecordNotFound
+		return nil, appErrors.DatabaseRecordNotFound
 	}
 	return post, nil
 }
 
 func (r PostRepository) Create(post *models.Post) error {
 	if err := r.db.ORM.Model(post).Create(post).Error; err != nil {
-		return err
+		return errors.Join(appErrors.DatabaseInternalError, err)
 	}
 	return nil
 }
 
 func (r PostRepository) Update(post *models.Post) error {
 	if err := r.db.ORM.Model(post).Updates(post).Error; err != nil {
-		return err
+		return errors.Join(appErrors.DatabaseInternalError, err)
 	}
 	return nil
 }
 
 func (r PostRepository) Delete(post *models.Post) error {
 	if err := r.db.ORM.Model(post).Where("id = ?", post.ID).Delete(post).Error; err != nil {
-		return errors.New("invalid, problem with internal")
+		return errors.Join(appErrors.DatabaseInternalError, err)
 	}
 	return nil
 }
