@@ -31,20 +31,22 @@ func NewUserController(userService services.UserService, authService services.Au
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Router			/users [get]
+//	@Success		200  {object}  response.Response{data=models.UserPaginationResult}  "ok"
+//	@Failure		400  {object}  response.Response{data=[]response.ValidationErrors}  "bad request"
 func (c UserController) List(ctx *gin.Context) {
 	params := new(models.UserQueryParams)
 	if err := ctx.ShouldBindQuery(params); err != nil {
-		response.Response{Code: http.StatusBadRequest, Message: err}.JSON(ctx)
+		response.BadRequest{Req: models.UserQueryParams{}, Message: err}.JSON(ctx)
 		return
 	}
 
 	qr, err := c.userService.Query(params)
 	if err != nil {
-		response.Response{Code: http.StatusBadRequest, Message: err}.JSON(ctx)
+		response.BadRequest{Message: err}.JSON(ctx)
 		return
 	}
 
-	response.Response{Code: http.StatusOK, Data: qr}.JSON(ctx)
+	response.Response{Data: qr}.JSON(ctx)
 }
 
 // Detail godoc
@@ -56,6 +58,8 @@ func (c UserController) List(ctx *gin.Context) {
 //	@Produce		application/json
 //	@Param			username  path  string  true  "Username"
 //	@Router			/users/{username} [get]
+//	@Success		200  {object}  response.Response{data=models.User}  "ok"
+//	@Failure		404  {object}  response.Response  "not found"
 func (c UserController) Detail(ctx *gin.Context) {
 	qr, err := c.userService.GetByUsername(ctx.Param("username"))
 	if err != nil {
@@ -76,6 +80,10 @@ func (c UserController) Detail(ctx *gin.Context) {
 //	@Security 		BearerAuth
 //	@Param			username  path  string  true  "Username"
 //	@Router			/users/{username} [delete]
+//	@Success		204  {object}  nil  "no content"
+//	@Failure		404  {object}  response.Response  "not found"
+//	@Failure		401  {object}  response.Response  "unauthorized"
+//	@Failure		403  {object}  response.Response  "forbidden"
 func (c UserController) Destroy(ctx *gin.Context) {
 	user, err := c.userService.GetByUsername(ctx.Param("username"))
 	if err != nil {
