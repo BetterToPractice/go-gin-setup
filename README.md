@@ -26,3 +26,8 @@ go run main.go migrate -e down
 go run main.go migrate -e down 0001
 go run main.go migrate -e undo
 ```
+
+### How to Generate Swagger
+```shell
+swag init --parseDependency --parseInternal
+```
