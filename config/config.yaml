@@ -1,4 +1,5 @@
 Name: go-gin-setup
+Secret: foobar
 
 Http:
   Host: 127.0.0.1

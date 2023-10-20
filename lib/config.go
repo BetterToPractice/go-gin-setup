@@ -9,7 +9,8 @@ import (
 
 var configPath = "./config.yml"
 var configDefault = Config{
-	Name: "go-gin-setup",
+	Name:   "go-gin-setup",
+	Secret: "foobar",
 	Http: &HttpConfig{
 		Host: "192.0.0.1",
 		Port: 8080,
@@ -51,6 +52,7 @@ var configDefault = Config{
 
 type Config struct {
 	Name     string          `mapstructure:"Name"`
+	Secret   string          `mapstructure:"Secret"`
 	Http     *HttpConfig     `mapstructure:"Http"`
 	Database *DatabaseConfig `mapstructure:"Database"`
 	Auth     *AuthConfig     `mapstructure:"Auth"`
