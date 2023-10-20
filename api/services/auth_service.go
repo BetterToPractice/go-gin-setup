@@ -3,11 +3,12 @@ package services
 import (
 	"errors"
 	"fmt"
+	"github.com/BetterToPractice/go-gin-setup/api/dto"
 	"github.com/BetterToPractice/go-gin-setup/api/mails"
 	"github.com/BetterToPractice/go-gin-setup/constants"
+	appErrors "github.com/BetterToPractice/go-gin-setup/errors"
 	"github.com/BetterToPractice/go-gin-setup/lib"
 	"github.com/BetterToPractice/go-gin-setup/models"
-	"github.com/BetterToPractice/go-gin-setup/models/dto"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"time"
@@ -30,7 +31,7 @@ type options struct {
 }
 
 func NewAuthService(config lib.Config, userService UserService, authMail mails.AuthMail, db lib.Database) AuthService {
-	signingKey := fmt.Sprintf("jwt:%s", config.Name)
+	signingKey := fmt.Sprintf("jwt:%s", config.Secret)
 	opts := &options{
 		issuer:        config.Name,
 		expired:       config.Auth.TokenExpired,
@@ -53,9 +54,11 @@ func NewAuthService(config lib.Config, userService UserService, authMail mails.A
 	}
 }
 
-func (s AuthService) GenerateToken(user *models.User) (string, error) {
+func (s AuthService) GenerateToken(user *models.User) (*dto.JWTResponse, error) {
 	now := time.Now()
-	claims := &dto.JwtClaims{
+	resp := &dto.JWTResponse{}
+
+	claims := &dto.JWTClaims{
 		ID:       user.ID,
 		Username: user.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -65,42 +68,47 @@ func (s AuthService) GenerateToken(user *models.User) (string, error) {
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
-	return token.SignedString(s.opts.signingKey)
+	access, err := token.SignedString(s.opts.signingKey)
+	if err != nil {
+		return nil, err
+	}
+
+	resp.Serializer(access)
+	return resp, nil
 }
 
-func (s AuthService) ParseToken(tokenString string) (*dto.JwtClaims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &dto.JwtClaims{}, s.opts.keyfunc)
+func (s AuthService) ParseToken(tokenString string) (*dto.JWTClaims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &dto.JWTClaims{}, s.opts.keyfunc)
 	if err != nil {
 		return nil, err
 	}
 
 	if token != nil {
-		if claims, ok := token.Claims.(*dto.JwtClaims); ok && token.Valid {
+		if claims, ok := token.Claims.(*dto.JWTClaims); ok && token.Valid {
 			return claims, nil
 		}
 	}
 	return nil, errors.New("invalid token")
 }
 
-func (s AuthService) Register(username, password, email string) (*models.User, error) {
-	user := &models.User{
-		Username: username,
-		Password: models.HashPassword(password),
-		Email:    email,
-	}
-	if err := s.db.ORM.Create(&user).Error; err != nil {
+func (s AuthService) Register(register *dto.RegisterRequest) (*dto.RegisterResponse, error) {
+	user, err := s.userService.Register(register)
+	if err != nil {
 		return nil, err
 	}
 
 	s.authMail.Register(user)
 
-	return user, nil
+	resp := &dto.RegisterResponse{}
+	resp.Serializer(user)
+
+	return resp, nil
 }
 
-func (s AuthService) Login(login *dto.Login) (*dto.LoginResponse, error) {
+func (s AuthService) Login(login *dto.LoginRequest) (*dto.LoginResponse, error) {
 	user, err := s.userService.Verify(login.Username, login.Password)
 	if err != nil {
-		return nil, err
+		return nil, appErrors.Unauthorized
 	}
 
 	access, err := s.GenerateToken(user)
@@ -108,12 +116,15 @@ func (s AuthService) Login(login *dto.Login) (*dto.LoginResponse, error) {
 		return nil, err
 	}
 
-	return &dto.LoginResponse{Access: access}, nil
+	resp := &dto.LoginResponse{}
+	resp.Serializer(access.Access)
+
+	return resp, nil
 }
 
 func (s AuthService) Authenticate(ctx *gin.Context) (*models.User, error) {
 	claims, _ := ctx.Get(constants.CurrentUser)
-	jwtClaims, _ := claims.(*dto.JwtClaims)
+	jwtClaims, _ := claims.(*dto.JWTClaims)
 	if jwtClaims == nil {
 		return nil, errors.New("unauthorized")
 	}

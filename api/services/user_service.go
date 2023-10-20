@@ -2,8 +2,10 @@ package services
 
 import (
 	"errors"
+	"github.com/BetterToPractice/go-gin-setup/api/dto"
 	"github.com/BetterToPractice/go-gin-setup/api/mails"
 	"github.com/BetterToPractice/go-gin-setup/api/repositories"
+	appErrors "github.com/BetterToPractice/go-gin-setup/errors"
 	"github.com/BetterToPractice/go-gin-setup/lib"
 	"github.com/BetterToPractice/go-gin-setup/models"
 	"strconv"
@@ -40,6 +42,19 @@ func (s UserService) Query(params *models.UserQueryParams) (*models.UserPaginati
 
 func (s UserService) GetByUsername(username string) (*models.User, error) {
 	return s.userRepository.GetByUsername(username)
+}
+
+func (s UserService) Register(params *dto.RegisterRequest) (*models.User, error) {
+	user := &models.User{
+		Username: params.Username,
+		Password: params.Password,
+		Email:    params.Email,
+	}
+
+	if err := s.userRepository.Create(user); err != nil {
+		return nil, errors.Join(appErrors.DatabaseInternalError, err)
+	}
+	return user, nil
 }
 
 func (s UserService) Delete(user *models.User) error {
