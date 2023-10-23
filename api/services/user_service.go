@@ -36,7 +36,7 @@ func (s UserService) Verify(username, password string) (*models.User, error) {
 	return user, err
 }
 
-func (s UserService) Query(params *models.UserQueryParams) (*models.UserPaginationResult, error) {
+func (s UserService) Query(params *dto.UserQueryParam) (*dto.UserPaginationResponse, error) {
 	return s.userRepository.Query(params)
 }
 
