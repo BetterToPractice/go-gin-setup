@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"errors"
+	"github.com/BetterToPractice/go-gin-setup/api/dto"
 	appErrors "github.com/BetterToPractice/go-gin-setup/errors"
 	"github.com/BetterToPractice/go-gin-setup/lib"
 	"github.com/BetterToPractice/go-gin-setup/models"
@@ -17,19 +18,17 @@ func NewUserRepository(db lib.Database) UserRepository {
 	}
 }
 
-func (r UserRepository) Query(params *models.UserQueryParams) (*models.UserPaginationResult, error) {
+func (r UserRepository) Query(params *dto.UserQueryParam) (*dto.UserPaginationResponse, error) {
 	db := r.db.ORM.Preload("Profile").Model(&models.User{})
-	list := make(models.Users, 0)
 
+	var list models.Users
 	pagination, err := QueryPagination(db, params.PaginationParam, &list)
 	if err != nil {
 		return nil, errors.Join(appErrors.DatabaseInternalError, err)
 	}
 
-	qr := &models.UserPaginationResult{
-		Pagination: pagination,
-		List:       list,
-	}
+	qr := &dto.UserPaginationResponse{Pagination: pagination}
+	qr.Serializer(&list)
 
 	return qr, nil
 }

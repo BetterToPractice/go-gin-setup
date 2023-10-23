@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"errors"
-	"github.com/BetterToPractice/go-gin-setup/models/dto"
+	"github.com/BetterToPractice/go-gin-setup/api/dto"
 	"gorm.io/gorm"
 )
 

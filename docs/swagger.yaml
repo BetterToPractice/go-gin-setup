@@ -1,5 +1,5 @@
 definitions:
-  dto.Login:
+  dto.LoginRequest:
     properties:
       password:
         type: string
@@ -23,6 +23,15 @@ definitions:
       total:
         type: integer
     type: object
+  dto.PostPaginationResponse:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/dto.PostResponse'
+        type: array
+      pagination:
+        $ref: '#/definitions/dto.Pagination'
+    type: object
   dto.PostRequest:
     properties:
       body:
@@ -33,6 +42,17 @@ definitions:
     - body
     - title
     type: object
+  dto.PostResponse:
+    properties:
+      body:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      user:
+        $ref: '#/definitions/dto.PostUserResponse'
+    type: object
   dto.PostUpdateRequest:
     properties:
       body:
@@ -40,7 +60,21 @@ definitions:
       title:
         type: string
     type: object
-  dto.Register:
+  dto.PostUserResponse:
+    properties:
+      id:
+        type: integer
+      username:
+        type: string
+    type: object
+  dto.ProfileResponse:
+    properties:
+      gender:
+        type: string
+      phone_number:
+        type: string
+    type: object
+  dto.RegisterRequest:
     properties:
       email:
         type: string
@@ -60,94 +94,23 @@ definitions:
       username:
         type: string
     type: object
-  gorm.DeletedAt:
-    properties:
-      time:
-        type: string
-      valid:
-        description: Valid is true if Time is not NULL
-        type: boolean
-    type: object
-  models.Post:
-    properties:
-      body:
-        type: string
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      id:
-        type: integer
-      title:
-        type: string
-      updatedAt:
-        type: string
-      user:
-        $ref: '#/definitions/models.User'
-      userID:
-        type: integer
-    required:
-    - body
-    - title
-    type: object
-  models.PostPaginationResult:
+  dto.UserPaginationResponse:
     properties:
       list:
         items:
-          $ref: '#/definitions/models.Post'
+          $ref: '#/definitions/dto.UserResponse'
         type: array
       pagination:
         $ref: '#/definitions/dto.Pagination'
     type: object
-  models.Profile:
+  dto.UserResponse:
     properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      gender:
-        type: string
-      id:
-        type: integer
-      phoneNumber:
-        type: string
-      updatedAt:
-        type: string
-      userID:
-        type: integer
-    type: object
-  models.User:
-    properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
       email:
         type: string
-      id:
-        type: integer
-      posts:
-        items:
-          $ref: '#/definitions/models.Post'
-        type: array
       profile:
-        $ref: '#/definitions/models.Profile'
-      updatedAt:
-        type: string
+        $ref: '#/definitions/dto.ProfileResponse'
       username:
         type: string
-    required:
-    - email
-    - username
-    type: object
-  models.UserPaginationResult:
-    properties:
-      list:
-        items:
-          $ref: '#/definitions/models.User'
-        type: array
-      pagination:
-        $ref: '#/definitions/dto.Pagination'
     type: object
   response.Response:
     properties:
@@ -175,7 +138,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/dto.Login'
+          $ref: '#/definitions/dto.LoginRequest'
       produces:
       - application/json
       responses:
@@ -219,7 +182,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.PostPaginationResult'
+                  $ref: '#/definitions/dto.PostPaginationResponse'
               type: object
         "400":
           description: bad request
@@ -258,7 +221,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Post'
+                  $ref: '#/definitions/dto.PostResponse'
               type: object
         "400":
           description: bad request
@@ -343,7 +306,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Post'
+                  $ref: '#/definitions/dto.PostResponse'
               type: object
         "404":
           description: not found
@@ -378,7 +341,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Post'
+                  $ref: '#/definitions/dto.PostResponse'
               type: object
         "400":
           description: bad request
@@ -421,7 +384,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/dto.Register'
+          $ref: '#/definitions/dto.RegisterRequest'
       produces:
       - application/json
       responses:
@@ -465,7 +428,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.UserPaginationResult'
+                  $ref: '#/definitions/dto.UserPaginationResponse'
               type: object
         "400":
           description: bad request
@@ -536,7 +499,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.User'
+                  $ref: '#/definitions/dto.UserResponse'
               type: object
         "404":
           description: not found

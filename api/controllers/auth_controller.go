@@ -26,7 +26,7 @@ func NewAuthController(authService services.AuthService, userService services.Us
 //	@Tags			auth
 //	@Accept			application/json
 //	@Produce		application/json
-//	@Param 			data body dto.Register true "Post"
+//	@Param 			data body dto.RegisterRequest true "Post"
 //	@Router			/register [post]
 //	@Success		200  {object}  response.Response{data=dto.RegisterResponse}  "ok"
 //	@Failure		400  {object}  response.Response{data=[]response.ValidationErrors}  "bad request"
@@ -53,7 +53,7 @@ func (c AuthController) Register(ctx *gin.Context) {
 //	@Tags			auth
 //	@Accept			application/json
 //	@Produce		application/json
-//	@Param 			data body dto.Login true "Post"
+//	@Param 			data body dto.LoginRequest true "Post"
 //	@Router			/login [post]
 //	@Success		200  {object}  response.Response{data=dto.LoginResponse}  "ok"
 //	@Failure		400  {object}  response.Response{data=[]response.ValidationErrors}  "bad request"

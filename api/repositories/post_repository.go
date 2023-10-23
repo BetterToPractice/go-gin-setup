@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"errors"
+	dto2 "github.com/BetterToPractice/go-gin-setup/api/dto"
 	appErrors "github.com/BetterToPractice/go-gin-setup/errors"
 	"github.com/BetterToPractice/go-gin-setup/lib"
 	"github.com/BetterToPractice/go-gin-setup/models"
@@ -17,19 +18,19 @@ func NewPostRepository(db lib.Database) PostRepository {
 	}
 }
 
-func (r PostRepository) Query(params *models.PostQueryParams) (*models.PostPaginationResult, error) {
+func (r PostRepository) Query(params *dto2.PostQueryParam) (*dto2.PostPaginationResponse, error) {
 	db := r.db.ORM.Preload("User").Model(&models.Posts{})
-	list := make(models.Posts, 0)
 
+	var list models.Posts
 	pagination, err := QueryPagination(db, params.PaginationParam, &list)
 	if err != nil {
 		return nil, errors.Join(appErrors.DatabaseInternalError, err)
 	}
 
-	qr := &models.PostPaginationResult{
-		List:       list,
+	qr := &dto2.PostPaginationResponse{
 		Pagination: pagination,
 	}
+	qr.Serializer(&list)
 
 	return qr, nil
 }

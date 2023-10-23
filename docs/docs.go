@@ -35,7 +35,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.Login"
+                            "$ref": "#/definitions/dto.LoginRequest"
                         }
                     }
                 ],
@@ -110,7 +110,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.PostPaginationResult"
+                                            "$ref": "#/definitions/dto.PostPaginationResponse"
                                         }
                                     }
                                 }
@@ -183,7 +183,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.Post"
+                                            "$ref": "#/definitions/dto.PostResponse"
                                         }
                                     }
                                 }
@@ -269,7 +269,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.Post"
+                                            "$ref": "#/definitions/dto.PostResponse"
                                         }
                                     }
                                 }
@@ -381,7 +381,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.Post"
+                                            "$ref": "#/definitions/dto.PostResponse"
                                         }
                                     }
                                 }
@@ -453,7 +453,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.Register"
+                            "$ref": "#/definitions/dto.RegisterRequest"
                         }
                     }
                 ],
@@ -528,7 +528,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.UserPaginationResult"
+                                            "$ref": "#/definitions/dto.UserPaginationResponse"
                                         }
                                     }
                                 }
@@ -596,7 +596,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.User"
+                                            "$ref": "#/definitions/dto.UserResponse"
                                         }
                                     }
                                 }
@@ -664,7 +664,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dto.Login": {
+        "dto.LoginRequest": {
             "type": "object",
             "required": [
                 "password",
@@ -701,6 +701,20 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.PostPaginationResponse": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.PostResponse"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/dto.Pagination"
+                }
+            }
+        },
         "dto.PostRequest": {
             "type": "object",
             "required": [
@@ -716,6 +730,23 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.PostResponse": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/dto.PostUserResponse"
+                }
+            }
+        },
         "dto.PostUpdateRequest": {
             "type": "object",
             "properties": {
@@ -727,7 +758,29 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.Register": {
+        "dto.PostUserResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ProfileResponse": {
+            "type": "object",
+            "properties": {
+                "gender": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RegisterRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -757,58 +810,13 @@ const docTemplate = `{
                 }
             }
         },
-        "gorm.DeletedAt": {
-            "type": "object",
-            "properties": {
-                "time": {
-                    "type": "string"
-                },
-                "valid": {
-                    "description": "Valid is true if Time is not NULL",
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.Post": {
-            "type": "object",
-            "required": [
-                "body",
-                "title"
-            ],
-            "properties": {
-                "body": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.User"
-                },
-                "userID": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.PostPaginationResult": {
+        "dto.UserPaginationResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Post"
+                        "$ref": "#/definitions/dto.UserResponse"
                     }
                 },
                 "pagination": {
@@ -816,79 +824,17 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Profile": {
+        "dto.UserResponse": {
             "type": "object",
             "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
-                },
-                "gender": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "phoneNumber": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userID": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.User": {
-            "type": "object",
-            "required": [
-                "email",
-                "username"
-            ],
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
-                },
                 "email": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "integer"
-                },
-                "posts": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Post"
-                    }
-                },
                 "profile": {
-                    "$ref": "#/definitions/models.Profile"
-                },
-                "updatedAt": {
-                    "type": "string"
+                    "$ref": "#/definitions/dto.ProfileResponse"
                 },
                 "username": {
                     "type": "string"
-                }
-            }
-        },
-        "models.UserPaginationResult": {
-            "type": "object",
-            "properties": {
-                "list": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.User"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/dto.Pagination"
                 }
             }
         },

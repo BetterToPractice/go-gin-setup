@@ -1,9 +1,9 @@
 package controllers
 
 import (
+	"github.com/BetterToPractice/go-gin-setup/api/dto"
 	"github.com/BetterToPractice/go-gin-setup/api/policies"
 	"github.com/BetterToPractice/go-gin-setup/api/services"
-	"github.com/BetterToPractice/go-gin-setup/models"
 	"github.com/BetterToPractice/go-gin-setup/pkg/response"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -31,12 +31,12 @@ func NewUserController(userService services.UserService, authService services.Au
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Router			/users [get]
-//	@Success		200  {object}  response.Response{data=models.UserPaginationResult}  "ok"
+//	@Success		200  {object}  response.Response{data=dto.UserPaginationResponse}  "ok"
 //	@Failure		400  {object}  response.Response{data=[]response.ValidationErrors}  "bad request"
 func (c UserController) List(ctx *gin.Context) {
-	params := new(models.UserQueryParams)
+	params := new(dto.UserQueryParam)
 	if err := ctx.ShouldBindQuery(params); err != nil {
-		response.BadRequest{Req: models.UserQueryParams{}, Message: err}.JSON(ctx)
+		response.BadRequest{Req: dto.UserQueryParam{}, Message: err}.JSON(ctx)
 		return
 	}
 
@@ -58,16 +58,19 @@ func (c UserController) List(ctx *gin.Context) {
 //	@Produce		application/json
 //	@Param			username  path  string  true  "Username"
 //	@Router			/users/{username} [get]
-//	@Success		200  {object}  response.Response{data=models.User}  "ok"
+//	@Success		200  {object}  response.Response{data=dto.UserResponse}  "ok"
 //	@Failure		404  {object}  response.Response  "not found"
 func (c UserController) Detail(ctx *gin.Context) {
-	qr, err := c.userService.GetByUsername(ctx.Param("username"))
+	user, err := c.userService.GetByUsername(ctx.Param("username"))
 	if err != nil {
 		response.Response{Code: http.StatusNotFound, Message: err}.JSON(ctx)
 		return
 	}
 
-	response.Response{Code: http.StatusOK, Data: qr}.JSON(ctx)
+	resp := dto.UserResponse{}
+	resp.Serializer(user)
+
+	response.Response{Code: http.StatusOK, Data: resp}.JSON(ctx)
 }
 
 // Destroy godoc
@@ -87,18 +90,18 @@ func (c UserController) Detail(ctx *gin.Context) {
 func (c UserController) Destroy(ctx *gin.Context) {
 	user, err := c.userService.GetByUsername(ctx.Param("username"))
 	if err != nil {
-		response.Response{Code: http.StatusNotFound, Message: err}.JSON(ctx)
+		response.NotFound{Message: err}.JSON(ctx)
 		return
 	}
 
 	loggedInUser, _ := c.authService.Authenticate(ctx)
 	if isCan, err := c.userPolicy.CanDelete(loggedInUser, user); !isCan {
-		response.Response{Code: http.StatusUnauthorized, Message: err}.JSON(ctx)
+		response.PolicyResponse{Message: err}.JSON(ctx)
 		return
 	}
 
 	if err := c.userService.Delete(user); err != nil {
-		response.Response{Code: http.StatusBadRequest, Message: err}.JSON(ctx)
+		response.BadRequest{Message: err}.JSON(ctx)
 		return
 	}
 
